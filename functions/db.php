@@ -1,0 +1,108 @@
+<?php
+    function connectDB() {
+        $dbhost = "localhost";
+        $dblogin = "root";
+        $dbpass = "";
+        $dbname = "test";
+        $table_cities = "cities";
+        $table_users = "users";
+
+        $connect = new mysqli($dbhost, $dblogin, $dbpass);
+        if ($connect->connect_error) return "Ошибка подключения: " . $connect->connect_error;
+        if (!$connect->query("CREATE DATABASE IF NOT EXISTS `$dbname`")) return "Ошибка: " . $connect->error;
+        $connect->close();
+
+        $mysql = new mysqli($dbhost, $dblogin, $dbpass, $dbname);
+        $mysql->query("SET NAMES 'utf8'");
+        if ($mysql->connect_error) {
+            return "Ошибка подключения: " . $mysql->connect_error;
+        } else {
+            $mysql->query("CREATE TABLE IF NOT EXISTS `$table_cities` (
+            id INT (11) NOT NULL AUTO_INCREMENT,
+            name VARCHAR (50) NOT NULL,
+            sortindex INT(11) NOT NULL,
+            PRIMARY KEY (id)
+            )");
+
+            $mysql->query("CREATE TABLE IF NOT EXISTS `$table_users` (
+            id INT (11) NOT NULL AUTO_INCREMENT,
+            name VARCHAR (50) NOT NULL,
+            lastname VARCHAR (50) NOT NULL,
+            city_id INT (11),
+            img VARCHAR (255) NOT NULL,
+            PRIMARY KEY (id),
+            FOREIGN KEY (city_id) REFERENCES $table_cities(id)
+            )");
+            return $mysql;
+        }
+    }
+    function get_cities_all() {
+        $mysql = connectDB();
+        $sql = "SELECT `id`, `name` FROM `cities`";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $cities = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $cities[] = $row;
+            }
+        }
+        return $cities;
+    }
+    function get_city($id) {
+        $mysql = connectDB();
+        $sql = "SELECT `name`, `sortindex` FROM `cities` WHERE `id` = '$id'";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        return $result->fetch_assoc();
+    }
+    function add_city($name, $index) {
+        $mysql = connectDB();
+        $sql = "INSERT INTO `cities` (`name`, `sortindex`) VALUES ('$name', '$index')";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+    function delete_city($id) {
+        $mysql = connectDB();
+        $sql = "DELETE FROM `cities` WHERE `id` = '$id'";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+    function update_city($id, $name, $index) {
+        $mysql = connectDB();
+        $sql = "UPDATE `cities` SET `name` = '$name', `sortindex` = '$index' WHERE `id`= '$id'";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+
+    function sort_cities($field, $order) {
+        $mysql = connectDB();
+        $sql = "SELECT * FROM `cities` ORDER BY `$field`";
+        $sql .= ($order == 'sort_desc') ? " DESC" : " ASC";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $cities = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $cities[] = $row;
+            }
+        }
+        return $cities;
+    }
+    function add_user($name, $lastname, $city, $img) {
+        $mysql = connectDB();
+        $sql = "INSERT INTO `users` (`name`, `lastname`, `city_id`, `img`) VALUES ('$name', '$lastname', '$city', $img)";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+
+
+
+
+
+
+
+
+
