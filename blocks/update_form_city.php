@@ -1,12 +1,6 @@
 <?php
-    $id = $_POST['id'];
-    $city = get_city($id);
-    if (isset($_POST['submit_edit_city'])) {
-        $name = $_POST['edit_text_city'];
-        $index = $_POST['edit_text_rangir'];
-        update_city($id, $name, $index);
-        include "get_cities.php";
-    } else {
+$id = $_POST['id'];
+$city = get_city($id);
 ?>
 <form action="" method="post">
     <div class="form">
@@ -18,6 +12,3 @@
         <a href="/?page=1">Отмена</a>
     </div>
 </form>
-<?php
-    }
-?>

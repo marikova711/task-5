@@ -26,10 +26,10 @@
 
             $mysql->query("CREATE TABLE IF NOT EXISTS `$table_users` (
             id INT (11) NOT NULL AUTO_INCREMENT,
-            name VARCHAR (50) NOT NULL,
+            username VARCHAR (50) NOT NULL,
             lastname VARCHAR (50) NOT NULL,
             city_id INT (11),
-            img VARCHAR (255) NOT NULL,
+            img VARCHAR (100),
             PRIMARY KEY (id),
             FOREIGN KEY (city_id) REFERENCES $table_cities(id)
             )");
@@ -91,14 +91,88 @@
         }
         return $cities;
     }
-    function add_user($name, $lastname, $city, $img) {
+    function get_users_all() {
         $mysql = connectDB();
-        $sql = "INSERT INTO `users` (`name`, `lastname`, `city_id`, `img`) VALUES ('$name', '$lastname', '$city', $img)";
+        $sql = "SELECT `users`.*, `cities`.`name` FROM `users` INNER JOIN `cities` ON `cities`.`id` = `users`.`city_id`";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $users = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+        return $users;
+    }
+    function get_user($id) {
+        $mysql = connectDB();
+        $sql = "SELECT * FROM `users` WHERE `id` = '$id'";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        return $result->fetch_assoc();
+    }
+    function add_user($username, $lastname, $city, $img) {
+        $mysql = connectDB();
+        $sql = "INSERT INTO `users` (`username`, `lastname`, `city_id`, `img`) VALUES ('$username', '$lastname', '$city', '$img')";
         $mysql->query($sql);
         $mysql->close();
     }
-
-
+    function delete_user($id) {
+        $mysql = connectDB();
+        $sql = "DELETE FROM `users` WHERE `id` = '$id'";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+    function update_user($id, $username, $lastname, $city, $img) {
+        $mysql = connectDB();
+        $sql = "UPDATE `users` SET `username` = '$username', `lastname` = '$lastname', `city_id` = '$city', `img` = '$img' WHERE `id` = '$id'";
+        $mysql->query($sql);
+        $mysql->close();
+    }
+    function sort_users($field, $order) {
+        $mysql = connectDB();
+        $sql = "SELECT `users`.*, `cities`.`name` FROM `users` INNER JOIN `cities` ON `cities`.`id` = `users`.`city_id` ORDER BY `$field`";
+        $sql .= ($order == 'sort_desc') ? " DESC" : " ASC";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $users = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+        return $users;
+    }
+    function filter_users($city_id) {
+        $mysql = connectDB();
+        $sql = "SELECT * FROM `users` INNER JOIN `cities` ON `cities`.`id` = `users`.`city_id` WHERE `city_id` = '$city_id'";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $users = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+        return $users;
+    }
+    function search_users($query) {
+        $mysql = connectDB();
+        $sql = "SELECT * FROM `users` INNER JOIN `cities` ON `cities`.`id` = `users`.`city_id` WHERE `username` LIKE '%$query%' OR `lastname` LIKE '%$query%'";
+        $result = $mysql->query($sql);
+        $mysql->close();
+        $count = $result->num_rows;
+        $users = [];
+        if($count) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+        return $users;
+    }
 
 
 

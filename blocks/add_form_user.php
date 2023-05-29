@@ -10,9 +10,9 @@
                 $cities = get_cities_all();
                 if (!empty($cities)) {
                     foreach ($cities as $city) {
-                ?>
+                        ?>
                         <option value="<?=$city['id']?>"><?=$city['name']?></option>
-                <?php
+                        <?php
                     }
                 }
                 ?>

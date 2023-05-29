@@ -34,8 +34,8 @@
                 <ul class="lavaLampWithImage" id="1">
                     <?php
                     $pages = [["title" => "Города", "page" => 1],
-                        ["title" => "Пользователи", "page" => 2],
-                        ["title" => "Поиск", "page" => 3]];
+                              ["title" => "Пользователи", "page" => 2],
+                              ["title" => "Поиск", "page" => 3]];
                     foreach ($pages as $item) {
                     ?>
                         <li <?php if($_GET['page']==$item['page']) echo 'class="current"'; ?>><a href="?page=<?=$item['page']?>"><?=$item['title']?></a></li>

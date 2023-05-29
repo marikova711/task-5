@@ -1,3 +1,17 @@
+<?php
+if (isset($_POST['del_fors_city'])) {
+    $id = htmlspecialchars(trim($_POST['id']));
+
+    if ($id == "") {
+        echo "Выберите город для удаления";
+    } else if (!is_numeric($id)) {
+        echo "Введите корректные данные об удаляемом городе";
+    } else {
+        delete_city($id);
+        echo "Город удален";
+    }
+}
+?>
 <form action="" method="post">
     <div class="form flrig">
         <input type="submit" name="ins" value="Добавить" >
@@ -5,10 +19,6 @@
     </div>
 </form>
 <?php
-if (isset($_POST['del_fors_city'])) {
-    $id = $_POST['id'];
-    delete_city($id);
-}
 $cities = get_cities_all();
 if (!empty($cities)) {
     foreach ($cities as $city) {
